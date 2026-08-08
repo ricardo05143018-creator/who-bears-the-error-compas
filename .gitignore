@@ -1,0 +1,22 @@
+# Downloaded and runtime-generated row-level data
+data/compas-scores-two-years.csv
+data/processed/
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environments and editor files
+.venv/
+.idea/
+.vscode/
+
+# LaTeX build intermediates
+paper/build/
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
