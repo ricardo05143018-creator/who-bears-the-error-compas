@@ -9,7 +9,10 @@ Work in progress.
 
 The study extends an earlier expository analysis of COMPAS into a prespecified
 empirical investigation. The research protocol is included in
-`documentation/research_protocol.md`.
+`documentation/research_protocol.md`, with subsequent clarifications recorded
+in `documentation/AMENDMENTS.md`.
 
-Public release materials, manuscript, and final reproducibility documentation
-will be added after analysis and audit are complete.
+The repository now includes the replication, threshold sweep, bootstrap
+uncertainty analysis, asymmetric error-cost analysis, and population robustness
+check. Manuscript integration, citation review, reproducibility checks, and
+public release preparation remain in progress.
