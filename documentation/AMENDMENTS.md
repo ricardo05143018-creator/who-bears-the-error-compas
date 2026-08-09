@@ -13,3 +13,21 @@ The phrase "signed absolute differences" is internally inconsistent; the
 displayed formulas and the implemented estimand are signed Black-minus-White
 differences. The manuscript uses "signed differences" throughout. This corrects
 the label only and does not alter a formula, computation, or result.
+
+
+## 2026-08-09 — Repository-timing clarification
+
+**Type:** Non-substantive provenance clarification
+
+Protocol v1.0 was drafted and frozen locally on 2026-08-07. The GitHub
+repository was initialized on 2026-08-08.
+
+Accordingly, Section 15's instruction to commit the protocol before running
+the extension analysis was not satisfied as a Git timestamping requirement.
+The analytical specification itself was fixed before the prespecified
+extension results were generated and was not retroactively changed in response
+to those results.
+
+This clarification does not change the primary sample, threshold definitions,
+metric definitions, bootstrap scheme, loss function, focal lambda values,
+robustness checks, or planned outputs.
