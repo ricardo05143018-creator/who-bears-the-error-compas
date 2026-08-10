@@ -13,6 +13,8 @@ empirical investigation. The research protocol is included in
 in `documentation/AMENDMENTS.md`.
 
 The repository now includes the replication, threshold sweep, bootstrap
-uncertainty analysis, asymmetric error-cost analysis, and population robustness
-check. Manuscript integration, citation review, reproducibility checks, and
+uncertainty analysis, asymmetric error-cost analysis, population robustness
+check, and prespecified manuscript figures generated from the canonical outputs.
+
+Manuscript integration, citation review, final reproducibility checks, and
 public release preparation remain in progress.
