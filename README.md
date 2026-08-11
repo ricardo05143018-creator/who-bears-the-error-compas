@@ -14,7 +14,8 @@ in `documentation/AMENDMENTS.md`.
 
 The repository now includes the replication, threshold sweep, bootstrap
 uncertainty analysis, asymmetric error-cost analysis, population robustness
-check, and prespecified manuscript figures generated from the canonical outputs.
+check, prespecified manuscript figures, and final Data and Methods
+documentation derived from the frozen protocol and implemented pipeline.
 
-Manuscript integration, citation review, final reproducibility checks, and
-public release preparation remain in progress.
+Manuscript integration, related-work and citation review, final reproducibility
+checks, and public release preparation remain in progress.
