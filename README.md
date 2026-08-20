@@ -13,8 +13,8 @@ investigation. The research protocol is included in
 in `documentation/AMENDMENTS.md`.
 
 The repository currently includes the core empirical analyses and manuscript
-figures. Data and Methods, background and related work, and an integrated
-working manuscript are also included.
+figures. Data handling documentation, Data and Methods, background and related
+work, and an integrated working manuscript are also included.
 
 Citation review, final reproducibility checks, manuscript formatting, and
 public release preparation are still in progress.
