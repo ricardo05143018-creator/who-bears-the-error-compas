@@ -60,6 +60,8 @@ The empirical phase remains closed. The missing Sample R population robustness o
 - Inserted the three frozen tables, five frozen main figures, and two supplemental figures with final captions.
 - Added cross-references and a seven-item audited bibliography.
 - Removed draft-status and section-boundary notes from the paper body.
+- Added a brief AI-use disclosure for preprint submission; no analysis, results, citations, or substantive claims changed.
+- Rebuilt the submission PDF without watermarks and removed document-level metadata and embedded attachments from the distributed file.
 
 ## Adversarial review summary
 
