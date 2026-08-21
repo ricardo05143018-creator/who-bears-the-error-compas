@@ -6,6 +6,10 @@ Date: August 2026
 import os
 import sys
 
+import matplotlib
+
+matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -414,7 +418,7 @@ def plot_group_loss(ax, focal):
 
 
 def plot_bootstrap_membership(ax, optfreq):
-    # Membership frequencies can sum above 100% when a replicate has tied minimizers.
+    # membership frequencies can sum above 100% when a replicate has tied minimizers.
     for lmbda in FOCAL_LAMBDAS:
         rows = optfreq[np.isclose(optfreq["lambda"], lmbda)].sort_values("threshold")
         ax.plot(
@@ -432,7 +436,7 @@ def plot_bootstrap_membership(ax, optfreq):
 
 
 def plot_robustness_optima(ax, primary_minima, robustness_minima):
-    # Hollow circles keep coincident primary and robustness minima visible.
+    # hollow circles keep coincident primary and robustness minima visible.
     ax.scatter(
         primary_minima["lambda"],
         primary_minima["threshold"],
@@ -475,7 +479,7 @@ def main():
     calibration = calibration.sort_values("score").reset_index(drop=True)
     black_white = sweep[sweep["group"].isin(GROUPS)].copy()
     gap = sweep[sweep["group"] == "Gap (Black - White)"].copy()
-    # Keep all flagged rows because one lambda can have multiple tied minimizers.
+    # keep all flagged rows because one lambda can have multiple tied minimizers.
     primary_minima = cost[cost["is_primary_minimizer"]].copy()
     robustness_minima = cost[cost["is_robustness_minimizer"]].copy()
     focal = focal_loss_rows(cost)
@@ -549,7 +553,7 @@ def main():
         (FIGURE_DIR, "supplement_robustness_optimal_thresholds"),
     )
 
-    # Panels are replotted so the composite PDFs remain vector graphics.
+    # panels are replotted so the composite PDFs remain vector graphics.
     fig, axes = plt.subplots(1, 2, figsize=(15.0, 5.2))
     plot_score_distribution(axes[0], prepared)
     plot_rearrest_by_score(axes[1], calibration, intervals)
