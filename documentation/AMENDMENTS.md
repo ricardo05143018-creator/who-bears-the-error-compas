@@ -1,33 +1,21 @@
-# Protocol amendments
+# Protocol Amendments
 
-No substantive amendments were made to COMPAS Research Protocol v1.0.
+No substantive change has been made to the core empirical specification in COMPAS Research Protocol v1.0.
 
-The Sample R aggregate-cost calculation was a prespecified population
-robustness check in the protocol. Its implementation and the corresponding
-`population_robustness.csv` output complete that planned check; they do not
-change the estimand or add a post hoc analysis. The public script uses a neutral
-build date and contains no hard-coded expected substantive optimum.
+## Sample R population robustness check
 
-One terminology clarification applies to Section 7.1 of the frozen protocol.
-The phrase "signed absolute differences" is internally inconsistent; the
-displayed formulas and the implemented estimand are signed Black-minus-White
-differences. The manuscript uses "signed differences" throughout. This corrects
-the label only and does not alter a formula, computation, or result.
+The Sample R aggregate-cost calculation was included in the protocol as a robustness check. Its implementation and the corresponding `population_robustness.csv` output complete that analysis.
 
+The primary sample, loss function, focal lambda values, and primary comparisons are unchanged.
 
-## 2026-08-09 — Repository-timing clarification
+## Terminology clarification
 
-**Type:** Non-substantive provenance clarification
+Section 7.1 of the frozen protocol uses the phrase "signed absolute differences." The displayed formulas and implementation use signed Black-minus-White differences.
 
-Protocol v1.0 was drafted and frozen locally on 2026-08-07. The GitHub
-repository was initialized on 2026-08-08.
+The manuscript therefore uses "signed differences" throughout. This is a terminology correction only; the formulas, calculations, and results are unchanged.
 
-Accordingly, Section 15's instruction to commit the protocol before running
-the extension analysis was not satisfied as a Git timestamping requirement.
-The analytical specification itself was fixed before the prespecified
-extension results were generated and was not retroactively changed in response
-to those results.
+## 2026-08-09 — Repository timing
 
-This clarification does not change the primary sample, threshold definitions,
-metric definitions, bootstrap scheme, loss function, focal lambda values,
-robustness checks, or planned outputs.
+Protocol v1.0 was completed locally on August 7, 2026. The GitHub repository was created on August 8, so the repository history does not independently timestamp the earlier local protocol version.
+
+The extension analysis continued under the specifications recorded in that protocol version. This clarification does not change any analytical definition or reported result.
