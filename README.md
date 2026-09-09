@@ -32,7 +32,7 @@ and two supplemental figures in `output/figures/`.
 
 ## Repository map
 
-- `documentation/`: frozen protocol, amendments record, citation audit, and finalization report
+- `documentation/`: frozen protocol, amendments record, citation and audit
 - `src/`: acquisition, validation, metrics, diagnostics, threshold, bootstrap/cost, and figure scripts
 - `tests/`: data-integrity, threshold-mapping, replication, and endpoint tests
 - `output/tables/`: canonical aggregated machine-readable results
