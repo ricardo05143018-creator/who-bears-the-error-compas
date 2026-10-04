@@ -162,7 +162,7 @@ The analysis first reproduced ProPublica’s published $t=5$ contingency counts 
 Ranking discrimination was nearly identical across the two focal groups. The ROC AUC was 0.6918 for Black defendants and 0.6931 for White defendants, yielding a Black-minus-White difference of $-0.0013$. The 95% bootstrap interval for this difference, \[$-0.0287$, 0.0261\], included small differences in either direction (Table <a href="#tab:sample-replication" data-reference-type="ref" data-reference="tab:sample-replication">1</a>). Thus, the score ranked rearrest risk similarly across the two groups even though, as shown below, a common classification threshold produced substantially different error rates. Figure <a href="#fig:score-diagnostics" data-reference-type="ref" data-reference="fig:score-diagnostics">1</a> displays the group score distributions and observed rearrest rates within each score as descriptive diagnostics.
 
 <figure id="fig:score-diagnostics">
-<embed src="figure1.pdf" />
+<embed src="figure2.pdf" />
 <figcaption>Score distributions and observed outcomes. Panel A shows the within-group distribution of general-recidivism decile scores. Panel B shows observed two-year rearrest rates within each score with pointwise 95% bootstrap intervals; Black/White cell counts are printed below each score. The decile is not treated as a literal probability forecast.</figcaption>
 </figure>
 
@@ -171,7 +171,7 @@ Ranking discrimination was nearly identical across the two focal groups. The ROC
 At the conventional $t=5$ cutoff, the false-positive rate was 44.85% for Black defendants and 23.45% for White defendants, a gap of 21.39 percentage points. The false-negative pattern ran in the opposite direction: 27.99% for Black defendants and 47.72% for White defendants, a gap of $-19.74$ percentage points. Positive predictive values were much closer, at 62.97% and 59.13%, respectively (Table <a href="#tab:threshold-cost-results" data-reference-type="ref" data-reference="tab:threshold-cost-results">2</a>; Figure <a href="#fig:t5" data-reference-type="ref" data-reference="fig:t5">2</a>).
 
 <figure id="fig:t5">
-<embed src="figure2.pdf" style="width:72.0%" />
+<embed src="figure1.pdf" style="width:72.0%" />
 <figcaption>Group-specific false-positive rate, false-negative rate, and positive predictive value at the <span class="math inline"><em>t</em> = 5</span> common cutoff. Points are estimates and bars are pointwise 95% bootstrap intervals.</figcaption>
 </figure>
 
@@ -297,7 +297,7 @@ The study cannot identify an appropriate legal consequence, a morally correct er
 
 # Declaration of Generative AI Use
 
-Generative AI tools were used for grammar and language editing, structural feedback, revision of selected passages, and assistance with literature searches. The abstract, introduction, discussion, accountability framework, and conclusion also received AI-assisted language and structural edits.
+Generative AI tools were used for grammar and language editing, structural feedback, revision of selected passages, and assistance with literature searches.
 
 # References
 
