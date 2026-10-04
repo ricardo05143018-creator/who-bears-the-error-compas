@@ -44,7 +44,7 @@ The primary group contrasts were signed Black-minus-White differences in these r
 Threshold-independent ranking discrimination was summarized by the empirical ROC AUC for sample R, Black defendants, White defendants, and the signed Black-minus-White difference. AUC was interpreted as a ranking measure, not as evidence that classification errors at a selected cutoff were similar. As a descriptive score-level calibration diagnostic, the analysis also estimated
 
 \[
-q_{g,s}=P(Y=1\mid S=s,G=g)
+q_{g,s}=P(Y=1\mid S=s,G=g),
 \]
 
 for each score \(s=1,\ldots,10\), together with \(q_{B,s}-q_{W,s}\). Because the COMPAS decile is not a literal predicted probability, no Brier score or probability-calibration slope was calculated from \(S/10\).

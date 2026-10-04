@@ -2,30 +2,25 @@
 
 ## Threshold Choice, Fairness Trade-offs, and Institutional Accountability in COMPAS
 
-**Author:** Zhixun Zheng  
-**Date:** August 2026
+**Zhixun Zheng**
+
+August 2026
 
 ## Abstract
 
-Risk scores become consequential only after an institution chooses how to convert them into decisions. Using ProPublica's historical Broward County COMPAS data, this study asks how a common classification threshold redistributes false-positive and false-negative errors across recorded racial groups and what that implies for institutional accountability. It reproduces ProPublica's published two-year contingency counts in the full 7,214-defendant sample, evaluates all common decile thresholds, estimates pointwise uncertainty with 5,000 race-stratified defendant-level bootstrap replicates, and applies a prespecified asymmetric error-loss analysis in the 6,150-defendant Black-White comparison sample. Black and White ROC AUC values were nearly identical (0.6918 and 0.6931). At the conventional $t=5$ cutoff, however, false-positive rates were 44.85% and 23.45%, while false-negative rates were 27.99% and 47.72%, respectively; PPV differed by 3.84 percentage points. The direction of the FPR and FNR gaps persisted across every interior threshold. The aggregate loss-minimizing threshold also moved sharply with the prespecified false-positive weight: $\lambda=.25,.50,.75$ yielded $t^*=2,6,10$. Those focal optima were comparatively stable under the bootstrap and unchanged in the full-population robustness check. The optima are conditional on the stated error weights. More broadly, the results identify threshold choice as a decision that statistical evaluation alone does not settle: data can characterize the consequences of alternative thresholds, while the institution remains responsible for the objective and consequences attached to the chosen rule.
+Using ProPublica's historical Broward County COMPAS data, this study asks how a common classification threshold redistributes observed false-positive and false-negative errors across recorded racial groups. It reproduces published two-year contingency counts in the full 7,214-defendant sample, evaluates all common decile thresholds, estimates pointwise uncertainty with 5,000 race-stratified defendant-level bootstrap replicates, and applies prespecified asymmetric error-loss analyses in the 6,150-defendant Black-White comparison sample. Black and White ROC AUC values were nearly identical (0.6918 and 0.6931), but at $t=5$ their false-positive rates were 44.85% and 23.45%, and their false-negative rates were 27.99% and 47.72%. Under per-defendant loss, false-positive weights of $\lambda=.25,.50,.75$ selected thresholds $t^*=2,6,10$; at equal weighting, a prespecified class-conditional loss instead selected $t=5$. Moving from $t=5$ to $t=6$ in the comparison sample exchanged 319 fewer false positives for 287 more false negatives. These are comparisons of analytical rules, not estimates of their effects in actual judicial decisions. The results make three choices available for institutional scrutiny: the threshold, the definition and weighting of error, and the consequence attached to a classification.
 
 **Keywords:** COMPAS; algorithmic fairness; classification thresholds; false positives; false negatives; institutional accountability
 
 # Introduction
 
-Algorithmic risk scores do not become consequential decision rules merely by producing predictions. An institution must still decide where to place a classification threshold, what consequence a higher-risk classification may influence, and which errors it is more willing to tolerate. The COMPAS controversy made the stakes of those choices visible. In 2016, ProPublica reported that, among Broward County defendants who were not rearrested within two years, Black defendants were nearly twice as likely as White defendants to be classified above COMPAS’s low-risk category; false-negative rates ran in the opposite direction (Angwin et al. 2016; Larson et al. 2016). A subsequent reanalysis reported similar Black and White ranking discrimination and approximately similar observed rearrest rates within broad risk categories (Flores, Bechtel, and Lowenkamp 2016). These findings can coexist because they describe different properties of the same scores after those scores are converted into classifications.
+ProPublica's COMPAS investigation reported that, among Broward County defendants who were not rearrested within two years, Black defendants were nearly twice as likely as White defendants to be classified above the low-risk category; false-negative rates ran in the opposite direction (Angwin et al. 2016; Larson et al. 2016). A subsequent reanalysis found similar Black and White ranking discrimination and approximately similar observed rearrest rates within broad score categories (Flores, Bechtel, and Lowenkamp 2016). These findings describe different properties of the scores. AUC concerns ranking, PPV the composition of a classified group, and FPR and FNR the two directions of classification error. Under unequal observed outcome rates and imperfect prediction, plausible fairness criteria can conflict (Chouldechova 2017; Kleinberg, Mullainathan, and Raghavan 2017).
 
-The distinction is central to debates about algorithmic fairness. AUC evaluates ranking discrimination, PPV describes the observed outcome composition among those classified as higher risk, and FPR and FNR describe different directions of classification error. When observed outcome rates differ across groups and prediction is imperfect, several plausible fairness criteria generally cannot be satisfied simultaneously (Chouldechova 2017; Kleinberg, Mullainathan, and Raghavan 2017). These incompatibility results explain why apparently conflicting evaluations may each be statistically correct. They do not determine which criterion a public institution should prioritize, where it should place the threshold, or what consequences the resulting category should carry.
+The dispute also raises a decision question that no performance metric answers alone. A graded score does not specify where to draw a binary cutoff or what a higher-risk classification should be allowed to influence. The selected threshold changes who falls into each category, while the chosen loss function determines which errors count most in an optimization. This paper asks: How does a common threshold redistribute observed false-positive and false-negative errors across recorded racial groups in historical COMPAS data, and which choices must an institution account for when using such a rule?
 
-That unresolved step motivates this study. Much of the COMPAS dispute has been framed as a contest among performance or fairness metrics. Yet a graded score does not contain its own decision cutoff. The same score outputs can produce different classifications, false-positive and false-negative rates, and group disparities when a common threshold is moved. An institution can also obtain different loss-minimizing thresholds by assigning different relative weights to false positives and false negatives. Treating either the cutoff or the weighting as an automatic property of the model obscures the institutional choice between prediction and action.
+The analysis reproduces ProPublica's published two-year contingency counts, sweeps every common decile threshold, estimates Black-minus-White metric gaps with 5,000 race-stratified defendant-level bootstrap replicates, and evaluates prespecified error-loss specifications. Black and White AUC values are nearly identical, yet FPR and FNR gaps remain oppositely signed across interior thresholds. Under the primary per-defendant loss, changing the false-positive weight from $\lambda=.25$ to $.50$ to $.75$ moves the aggregate optimum from $t=2$ to $t=6$ to $t=10$. At $\lambda=.50$, changing the loss normalization alone moves the optimum from $t=6$ to $t=5$.
 
-This paper therefore asks: **How does the choice of classification threshold redistribute false-positive and false-negative errors across recorded racial groups in the historical COMPAS data, and what does that imply for institutional accountability?** It first reproduces ProPublica’s published two-year contingency counts from the public historical Broward County data. It then sweeps every common decile threshold, estimates Black-minus-White metric gaps with 5,000 race-stratified defendant-level bootstrap replicates, and evaluates a prespecified asymmetric error-loss function across false-positive weights. Throughout, the thresholds are analytical decision rules applied to historical scores rather than a reconstruction of judicial practice; the outcome is observed two-year rearrest, and $\lambda$ indexes prespecified error weights.
-
-Three findings organize the analysis. First, the known ProPublica contingency counts are reproduced exactly. Second, Black and White ROC AUC values are nearly identical and PPV differences are comparatively small, while common thresholds generate substantially larger, oppositely signed FPR and FNR gaps across the interior threshold range. Third, the aggregate loss-minimizing threshold changes from $t=2$ to $t=6$ to $t=10$ when the prespecified false-positive weight $\lambda$ moves from 0.25 to 0.50 to 0.75. The focal optima are comparatively stable under the prespecified bootstrap, but remain conditional on the selected objective.
-
-Empirically, the study extends a known-result replication into a sweep of all common decile thresholds, with uncertainty estimates and transparent cost sensitivity. Institutionally, it treats threshold choice as a decision input rather than an inherent property of the score. The operational framework organizes that decision around specification, error accounting, justification, and individual contestability.
-
-The remainder of the paper proceeds as follows. Section 2 situates the COMPAS dispute within work on competing metrics, incompatible fairness criteria, threshold choice, and institutional authority. Section 3 describes the data and analysis. Section 4 presents the results. Section 5 develops the institutional-accountability argument, Section 6 states the study’s limitations, and Section 7 concludes.
+The known-result replication and bootstrap provide checks for two focused comparisons: the exchange of errors between adjacent thresholds, and the different optima produced by two prespecified loss definitions at the same numerical weight. These comparisons motivate a limited institutional proposal: record the rule, the alternatives, the consequence it may influence, and the reasons for choosing it. The historical scores and observed two-year rearrest labels do not reveal which thresholds officials used or what effects a classification had on an individual's legal outcome. Section 2 reviews the relevant empirical and legal debate; Sections 3 and 4 present the design and results; Section 5 develops the proposed accountability record.
 
 # Background and Related Work
 
@@ -39,7 +34,7 @@ These analyses answer different statistical questions and, in places, use differ
 
 ## Different metrics answer different questions
 
-The relevant measures condition on different events. ROC AUC describes how often a randomly selected rearrested defendant receives a higher score than a randomly selected non-rearrested defendant. It is a ranking measure and does not require a particular threshold. Positive predictive value instead conditions on the higher-risk classification and asks what share of those classified higher risk were observed to be rearrested. False-positive and false-negative rates condition on the observed outcome and distinguish the two directions of error.
+The relevant measures condition on different events. ROC AUC describes how often a randomly selected rearrested defendant receives a higher score than a randomly selected non-rearrested defendant, counting a score tie as one-half. It is a ranking measure and does not require a particular threshold. Positive predictive value instead conditions on the higher-risk classification and asks what share of those classified higher risk were observed to be rearrested. False-positive and false-negative rates condition on the observed outcome and distinguish the two directions of error.
 
 Because the denominators differ, parity on one measure does not imply parity on another. This point is especially important when a score is used in a decision process. AUC concerns the ordering produced by the score; PPV concerns the composition of a selected category; FPR and FNR concern who bears each type of classification mistake. Reporting them together is therefore not a search for one master fairness statistic. It is an accounting of distinct properties that may matter for distinct institutional reasons.
 
@@ -90,7 +85,7 @@ At each threshold, true-negative, false-positive, false-negative, and true-posit
 FNR=\frac{FN}{FN+TP},\qquad
 PPV=\frac{TP}{TP+FP}.$$ The primary group contrasts were signed Black-minus-White differences in these rates. Differences rather than ratios were used as the primary contrasts because ratios become unstable when the White reference rate approaches zero; Black/White FPR and FNR ratios were retained only for the two prespecified reference cutoffs, $t=5$ and $t=8$. The threshold sweep also calculated TPR, TNR, NPV, selection rate, accuracy, balanced accuracy, and overall error rate, with the underlying numerators and denominators retained in the canonical outputs.
 
-Threshold-independent ranking discrimination was summarized by the empirical ROC AUC for sample R, Black defendants, White defendants, and the signed Black-minus-White difference. AUC was interpreted as a ranking measure, not as evidence that classification errors at a selected cutoff were similar. As a descriptive score-level calibration diagnostic, the analysis also estimated $$q_{g,s}=P(Y=1\mid S=s,G=g)$$ for each score $s=1,\ldots,10$, together with $q_{B,s}-q_{W,s}$. Because the COMPAS decile is not a literal predicted probability, no Brier score or probability-calibration slope was calculated from $S/10$.
+Threshold-independent ranking discrimination was summarized by the empirical ROC AUC for sample R, Black defendants, White defendants, and the signed Black-minus-White difference. AUC was interpreted as a ranking measure, not as evidence that classification errors at a selected cutoff were similar. As a descriptive score-level calibration diagnostic, the analysis also estimated $q_{g,s}=P(Y=1\mid S=s,G=g),$ for each score $s=1,\ldots,10$, together with $q_{B,s}-q_{W,s}$. Because the COMPAS decile is not a literal predicted probability, no Brier score or probability-calibration slope was calculated from $S/10$.
 
 ## Bootstrap uncertainty
 
@@ -112,11 +107,15 @@ As a prespecified robustness check, the optimization was repeated using the clas
 
 The analysis plan was frozen before implementation of the threshold, bootstrap, and cost extensions. Because the dataset was public and ProPublica’s headline error rates were already known, the $t=5$ analysis was designated a known-result replication rather than a blind preregistration. Extension results were generated only after the acquisition and integrity checks passed and the expected $t=5$ contingency counts were reproduced exactly. Category mapping, the $t=8$ cutoff, sample-R aggregate loss, endpoint behavior, the class-conditional loss, and clean-run reproducibility were the prespecified robustness checks.
 
-The population robustness check repeated the aggregate per-defendant loss calculation across the full sample R population and compared its minimizing set with the primary sample C result at every value on the prespecified $\lambda$ grid. The code separated acquisition, preparation, metric calculation, resampling, cost analysis, and output generation; exposed the random seed; and generated public tables and figure-source data without manual transcription. The full pipeline was required to reproduce identical aggregate outputs from a clean run.
+The population robustness check repeated the aggregate per-defendant loss calculation across the full sample R population and compared its minimizing set with the primary sample C result at every value on the prespecified $\lambda$ grid. The code separated acquisition, preparation, metric calculation, resampling, cost analysis, and output generation; exposed the random seed; and generated public tables and figure-source data without manual transcription. The full pipeline was required to reproduce identical aggregate outputs from a clean run. The accompanying repository’s `README.md` documents reproduction; `src/threshold_sweep.py` generates the aggregate `output/tables/threshold_sweep_results.csv` table used for the adjacent-threshold comparison below.
 
 <div class="threeparttable">
 
-<div id="tab:sample-replication">
+
+
+**Table 1. Sample construction, exact replication, and score discrimination**
+
+
 
 | *Panel A. Data and sample audit*          |                                                       |                       |       |       |       |
 |:------------------------------------------|------------------------------------------------------:|----------------------:|------:|------:|------:|
@@ -143,7 +142,6 @@ The population robustness check repeated the aggregate per-defendant loss calcul
 | White                                     |                                                0.6931 |    \[0.6713, 0.7150\] |       |       |       |
 | Black $-$ White                           |                                             $-0.0013$ | \[$-0.0287$, 0.0261\] |       |       |       |
 
-Sample construction, exact replication, and score discrimination
 
 </div>
 
@@ -164,7 +162,7 @@ The analysis first reproduced ProPublica’s published $t=5$ contingency counts 
 Ranking discrimination was nearly identical across the two focal groups. The ROC AUC was 0.6918 for Black defendants and 0.6931 for White defendants, yielding a Black-minus-White difference of $-0.0013$. The 95% bootstrap interval for this difference, \[$-0.0287$, 0.0261\], included small differences in either direction (Table <a href="#tab:sample-replication" data-reference-type="ref" data-reference="tab:sample-replication">1</a>). Thus, the score ranked rearrest risk similarly across the two groups even though, as shown below, a common classification threshold produced substantially different error rates. Figure <a href="#fig:score-diagnostics" data-reference-type="ref" data-reference="fig:score-diagnostics">1</a> displays the group score distributions and observed rearrest rates within each score as descriptive diagnostics.
 
 <figure id="fig:score-diagnostics">
-<embed src="figure2.pdf" />
+<embed src="figure1.pdf" />
 <figcaption>Score distributions and observed outcomes. Panel A shows the within-group distribution of general-recidivism decile scores. Panel B shows observed two-year rearrest rates within each score with pointwise 95% bootstrap intervals; Black/White cell counts are printed below each score. The decile is not treated as a literal probability forecast.</figcaption>
 </figure>
 
@@ -173,7 +171,7 @@ Ranking discrimination was nearly identical across the two focal groups. The ROC
 At the conventional $t=5$ cutoff, the false-positive rate was 44.85% for Black defendants and 23.45% for White defendants, a gap of 21.39 percentage points. The false-negative pattern ran in the opposite direction: 27.99% for Black defendants and 47.72% for White defendants, a gap of $-19.74$ percentage points. Positive predictive values were much closer, at 62.97% and 59.13%, respectively (Table <a href="#tab:threshold-cost-results" data-reference-type="ref" data-reference="tab:threshold-cost-results">2</a>; Figure <a href="#fig:t5" data-reference-type="ref" data-reference="fig:t5">2</a>).
 
 <figure id="fig:t5">
-<embed src="figure1.pdf" style="width:72.0%" />
+<embed src="figure2.pdf" style="width:72.0%" />
 <figcaption>Group-specific false-positive rate, false-negative rate, and positive predictive value at the <span class="math inline"><em>t</em> = 5</span> common cutoff. Points are estimates and bars are pointwise 95% bootstrap intervals.</figcaption>
 </figure>
 
@@ -181,7 +179,11 @@ These differences were not unique to the $t=5$ cutoff. Increasing the common thr
 
 <div class="threeparttable">
 
-<div id="tab:threshold-cost-results">
+
+
+**Table 2. Core threshold results and cost-sensitive optimal thresholds**
+
+
 
 | *Panel A. Prespecified common cutoffs* |        |               |                |                |                        |                      |
 |:---------------------------------------|:-------|--------------:|---------------:|---------------:|-----------------------:|---------------------:|
@@ -193,33 +195,32 @@ These differences were not unique to the $t=5$ cutoff. Increasing the common thr
 |                                        | FNR    |         61.02 |          79.81 |       $-18.79$ | \[$-22.16$, $-15.37$\] |                 0.76 |
 |                                        | PPV    |         72.29 |          70.65 |        $+1.64$ |   \[$-4.38$, $+7.61$\] |                    – |
 | *Panel B. Focal cost sensitivity*      |        |               |                |                |                        |                      |
-| $\lambda$ (FP:FN)                      |        | Primary $t^*$ | Aggregate loss |     Black loss |             White loss | Bootstrap membership |
+| $\lambda$ (FP:FN)                      |        | Primary $t^*$ | Aggregate loss |     Black loss |             White loss | Bootstrap share |
 | 0.25 (1:3)                             |        |             2 |         0.1275 |         0.1191 |                 0.1401 |               99.62% |
 | 0.50 (1:1)                             |        |             6 |         0.1720 |         0.1791 |                 0.1612 |               90.92% |
 | 0.75 (3:1)                             |        |            10 |         0.1150 |         0.1252 |                 0.0996 |               87.70% |
 
-Core threshold results and cost-sensitive optimal thresholds
 
 </div>
 
 <div class="tablenotes">
 
-*Note.* Both cutoffs apply the same decision rule to every group: higher risk if score $\geq t$. The $t=5$ cutoff reproduces Low versus Medium/High; $t=8$ reproduces Low/Medium versus High. Gaps are signed Black-minus-White differences in percentage points. Intervals are pointwise 95% percentile intervals from 5,000 race-stratified bootstrap replicates and are not threshold-by-threshold significance tests. FPR and FNR ratios use the White rate as the denominator. Primary $t^*$ denotes the common threshold minimizing the prespecified per-defendant aggregate loss at the displayed $\lambda$. Aggregate loss is $[\lambda FP+(1-\lambda)FN]/N$ in sample C; group-specific weighted error loss uses the same expression within each group. Lambda is a sensitivity parameter, not an estimate of social harm. Bootstrap membership is the share of replicates in which the displayed threshold belonged to the complete minimizing set; tied minimizers mean frequencies across thresholds need not sum to 100%.
+*Note.* A common threshold applies to both groups: higher risk if $S_i\geq t$. The $t=5$ cutoff separates Low from Medium/High; $t=8$ separates Low/Medium from High. Gaps are signed Black-minus-White percentage-point differences; FPR and FNR ratios use the White rate. Intervals are pointwise 95% percentile intervals from 5,000 race-stratified bootstrap replicates. Primary $t^*$ minimizes $[\lambda FP+(1-\lambda)FN]/N$ in sample C; group losses use each group’s own $N$. Bootstrap share is the percentage of replicates whose minimizing set contains the displayed threshold, so shares may sum above 100% when minimizers tie. The weight $\lambda$ is a sensitivity parameter, not measured social harm.
 
 </div>
 
 </div>
-
-<figure id="fig:threshold-consequences">
-<embed src="figure3.pdf" style="width:97.0%" />
-<figcaption>Consequences of moving the common threshold. Panels show group-specific FPR, FNR, higher-risk classification rate, and PPV for thresholds <span class="math inline"><em>t</em> = 1, …, 11</span>. The same threshold is applied to both groups. Endpoints are retained even when PPV or NPV is undefined because no one or everyone is classified higher risk.</figcaption>
-</figure>
 
 ## Error-rate disparities persist across nondegenerate thresholds
 
 Across the interior threshold range, the signed FPR gap remained positive and the FNR gap remained negative, indicating that Black defendants experienced higher false-positive rates while White defendants experienced higher false-negative rates under the same common threshold. Pointwise bootstrap intervals for both gaps remained separated from zero across all interior thresholds ($t=2,\ldots,10$) (Figure <a href="#fig:gaps" data-reference-type="ref" data-reference="fig:gaps">4</a>).
 
 PPV differences were considerably smaller and less stable. Around the central thresholds, the Black-minus-White PPV gap approached zero, and several pointwise bootstrap intervals crossed zero. This combination—similar ranking discrimination and comparatively small predictive-value differences alongside much larger error-rate differences—illustrates why no single performance statistic determines how classification errors are distributed.
+
+<figure id="fig:threshold-consequences">
+<embed src="figure3.pdf" style="width:97.0%" />
+<figcaption>Consequences of moving the common threshold. Panels show group-specific FPR, FNR, higher-risk classification rate, and PPV for thresholds <span class="math inline"><em>t</em> = 1, …, 11</span>. The same threshold is applied to both groups. Endpoints are retained even when PPV or NPV is undefined because no one or everyone is classified higher risk.</figcaption>
+</figure>
 
 <figure id="fig:gaps">
 <embed src="figure4.pdf" />
@@ -234,6 +235,8 @@ These optima were also relatively stable under defendant-level bootstrap resampl
 
 As a prespecified population robustness check, the focal aggregate optima were unchanged in sample R ($t^*=2,6,10$ at $\lambda=0.25,0.50,0.75$); the complete sample R and sample C minimizing sets differed at only 5 of 101 grid weights, each by one adjacent threshold.
 
+The prespecified class-conditional loss check produced a different answer at equal weighting. At $\lambda=0.50$, the per-defendant loss selected $t=6$, whereas the class-conditional loss selected $t=5$ (Figure 7). At $\lambda=0.25$ and $0.75$, both specifications selected $t=2$ and $t=10$, respectively.
+
 Aggregate optimality also did not imply equal modeled burden across groups. At the equal-weight optimum ($t=6$), for example, group-specific weighted error loss was 0.1791 for Black defendants and 0.1612 for White defendants. At $\lambda=0.75$ and $t=10$, the corresponding values were 0.1252 and 0.0996. These quantities are sensitivity measures rather than estimates of social harm, but they show that minimizing aggregate loss and evaluating its distribution across groups are distinct questions.
 
 <figure id="fig:cost">
@@ -243,56 +246,34 @@ Aggregate optimality also did not imply equal modeled burden across groups. At t
 
 # Discussion: Institutional Accountability
 
-The empirical results locate a consequential institutional choice between model output and public action. COMPAS supplies a score; converting it into a classification rule requires a threshold, an objective that assigns relative weight to different errors, and a specification of what consequence the classification may influence. Those choices change both the rule and the distribution of its errors. Accountability therefore extends from evaluation of the score to the institution’s conversion of that score into action (Table <a href="#tab:accountability-framework" data-reference-type="ref" data-reference="tab:accountability-framework">3</a>).
+The analysis does not reconstruct a historical judicial decision. It does, however, show what a prospective user of a threshold-based rule would have to choose and explain. Table 3 proposes a record for that purpose. Its central object is the decision rule, including its loss definition and permitted consequence, rather than an isolated score-performance statistic.
 
-## From prediction to a decision rule
+## What changes between adjacent thresholds
 
-A risk score orders or differentiates cases. A threshold turns that ranking into a category and, potentially, an adverse consequence; in that sense, the threshold is a policy input rather than an inherent property of the score.
+Consider the move from $t=5$ to $t=6$ in sample C. All 606 defendants with a score of 5 switch from the analytical higher-risk category to the lower-risk category. Relative to $t=5$, this produces 319 fewer false positives and 287 more false negatives: 32 fewer classification errors in total. At equal error weights, the primary per-defendant loss falls only from 0.1746 to 0.1720. The Black-minus-White FPR gap narrows from 21.39 to 19.60 percentage points, while the FNR gap widens in magnitude from 19.74 to 21.97 percentage points (Figures 3--4). The changes are descriptive consequences of two specified rules applied to the historical data; they are not observed changes in detention, sentencing, or any other legal outcome.
 
-Figure <a href="#fig:cost" data-reference-type="ref" data-reference="fig:cost">5</a> makes the consequence concrete. Under the prespecified loss function, changing the relative weight placed on false positives and false negatives moves the aggregate loss-minimizing common threshold from $t=2$ to $t=6$ to $t=10$. The procedure therefore answers a conditional question: given a specified population, outcome, loss function, and error weighting, which threshold minimizes the stated objective? Choosing that objective and attaching consequences to the resulting rule remain institutional decisions.
+The comparison makes the decision problem less abstract. A small improvement in an aggregate objective accompanies a change in which errors occur and how their rates differ across groups. For illustration, if a jurisdiction proposed to use a higher-risk classification only to trigger additional review, moving from $t=5$ to $t=6$ would avoid that trigger for 319 people not observed to be rearrested and also for 287 people later observed to be rearrested. The institution would need to explain what the review actually does before treating either change as beneficial or harmful. This is a hypothetical use of the classification, not a claim about Broward County practice.
 
-## Predictive performance and error allocation
+## The objective also requires a choice
 
-The near-equality of Black and White ROC AUC values coexists with substantially larger threshold-specific FPR and FNR gaps. These metrics answer different questions. AUC describes ranking discrimination; PPV describes the observed outcome composition among those classified as higher risk; FPR and FNR describe the two directions of classification error conditional on the observed outcome.
+The class-conditional check identifies a choice within the word “equal.” At $\lambda=.50$, the primary objective counts errors over all defendants and selects $t=6$; the alternative normalizes separately by the observed non-rearrested and rearrested pools and selects $t=5$ (Figure 7). Both are transparent calculations, but they answer different questions. A claim that a threshold is “optimal” should therefore name the population, outcome, loss normalization, and weights before presenting the selected cutoff.
 
-The threshold sweep shows why this distinction matters. Similar ranking performance and comparatively small PPV differences did not prevent a common threshold from allocating false positives and false negatives differently across the two focal groups. The result is consistent with the incompatibility arguments developed by Chouldechova (2017) and Kleinberg, Mullainathan, and Raghavan (2017): metric trade-offs remain part of the decision context and cannot be collapsed into a single performance verdict.
+The unequal group-specific losses at the focal aggregate optima add a separate distributive question. For example, at $\lambda=.50$ and $t=6$, modeled weighted error loss is 0.1791 for Black defendants and 0.1612 for White defendants (Table 2). These figures are not measures of realized social harm. They show why choosing an aggregate objective does not end an assessment of how its errors are distributed.
 
-## Aggregate optimality and group distribution
+## A record for institutional review
 
-Minimizing aggregate weighted error answers a different question from evaluating how that error is distributed across groups. At the focal optima, group-specific weighted losses remain unequal (Table <a href="#tab:threshold-cost-results" data-reference-type="ref" data-reference="tab:threshold-cost-results">2</a>; Figure <a href="#fig:cost" data-reference-type="ref" data-reference="fig:cost">5</a>). The aggregate objective therefore selects a common threshold without resolving the distributive implications of the resulting rule.
+Table 3 organizes a proposed record around four linked tasks. The institution first identifies who authorized a particular rule and what consequence the classification may influence. It then places the adjacent-threshold comparison and the alternative equal-weight optima beside that rule, so the reasons for the selected objective can be assessed against visible alternatives. Recording those choices matters only if an affected person can also identify the rule applied in an individual case, challenge erroneous inputs or applicability, and obtain a reasoned review with a remedy. These are proposed accountability conditions, not findings about historical COMPAS deployment or a complete statement of legal requirements.
 
-These group-specific losses are sensitivity quantities constructed from observed false positives and false negatives. Their diagnostic value is that they expose a distributional consequence that an aggregate objective can conceal. Optimization selects a threshold under a specified objective; institutional justification must address both the objective and the distribution produced by the chosen rule.
 
-## From model evaluation to institutional accountability
+**Table 3. Operational accountability framework for threshold-based algorithmic decisions**
 
-Table <a href="#tab:accountability-framework" data-reference-type="ref" data-reference="tab:accountability-framework">3</a> translates the empirical analysis into a proposed operational record for consequential threshold-based decisions. Decision specification makes the rule itself inspectable: outcome, horizon, population, score and version, threshold, permitted consequence, and decision authority. Error accounting then makes visible the performance consequences of that rule, including subgroup gaps, uncertainty, threshold sensitivity, and relevant local validation.
+| Module | Proposed record or disclosure | What this analysis illustrates |
+|:---|:---|:---|
+| **Decision specification** | Name authority, outcome/horizon, population, score/version, threshold, and permitted consequence | Moving from $t=5$ to $t=6$ reclassifies all 606 score-5 defendants |
+| **Error accounting** | Publish counts, denominators, subgroup rates, gaps, uncertainty, and threshold sensitivity | The move yields 319 fewer FP and 287 more FN; the FPR gap narrows while the FNR gap widens |
+| **Institutional justification** | Record the loss definition, error weights, alternatives, reasons, and revision triggers | At $\lambda=.50$, per-defendant loss selects $t=6$; class-conditional loss selects $t=5$ |
+| **Individual contestability** | Enable challenge to inputs, applicability, score/version/threshold, consequence, and reasons | Aggregate results cannot establish the effect of a classification in an individual case |
 
-The remaining two modules address what optimization cannot supply. Institutional justification records reasons for the selected threshold and error weighting, the alternatives considered, and the conditions that would trigger revision or suspension. Individual contestability provides an affected person a route to challenge inputs, applicability, the score or version and threshold used, the interpretation of the score, the resulting consequence, and the decision-maker’s reasons. Human review is meaningful only when the reviewer can inspect the relevant information, give independent reasons, and remedy an error.
-
-Together, these modules create a record through which a threshold-based decision can be audited, justified, and contested. Responsibility remains with the institution that converts the score into a rule with consequences.
-
-<div class="threeparttable">
-
-<div id="tab:accountability-framework">
-
-| Module                          | Proposed record or disclosure                                                                         | What this analysis illustrates                                                                                                               |
-|:--------------------------------|:-----------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------|
-| **Decision specification**      | Outcome, horizon, population, score/version, threshold, permitted consequence, decision authority    | Threshold is a policy input, not an inherent property of the score                                                                           |
-| **Error accounting**            | FPR/FNR/PPV, subgroup gaps, uncertainty, threshold sensitivity, local validation                     | Small AUC/PPV differences can coexist with much larger FPR/FNR gaps                                                                          |
-| **Institutional justification** | Why this threshold? How are FP and FN harms weighted? What alternatives were considered?             | Changing FP/FN weights shifts the aggregate optimum from $t^*=2$ at $\lambda=.25$, to $t^*=6$ at $\lambda=.50$, to $t^*=10$ at $\lambda=.75$ |
-| **Individual contestability**   | Challenge inputs, applicability, score/version/threshold, use of score, adverse consequence, reasons | Group-level probabilities and aggregate optimization do not settle an individual case                                                        |
-
-Operational accountability framework for threshold-based algorithmic decisions
-
-</div>
-
-<div class="tablenotes">
-
-*Note.* This normative framework translates the descriptive findings into proposed disclosure, justification, and review questions; it does not purport to exhaust legal requirements. AUC denotes area under the receiver operating characteristic curve; FPR, FNR, PPV, FP, and FN denote false-positive rate, false-negative rate, positive predictive value, false positives, and false negatives. The displayed $t^*$ values are the common thresholds minimizing the prespecified per-defendant aggregate loss at each displayed $\lambda$.
-
-</div>
-
-</div>
 
 # Limitations
 
@@ -310,27 +291,15 @@ Finally, the 5,000-replicate race-stratified defendant-level bootstrap captures 
 
 # Conclusion
 
-This study examined how a common COMPAS threshold redistributes false-positive and false-negative errors across groups in historical Broward County data. Black and White defendants had nearly identical ranking discrimination and comparatively small PPV differences, while common thresholds produced much larger and oppositely signed FPR and FNR gaps. Moving the threshold changed the allocation of those errors rather than eliminating the distributive trade-off.
+In these historical COMPAS data, similar Black and White ranking discrimination coexists with substantial, oppositely signed classification-error gaps. The adjacent $t=5$ and $t=6$ rules expose a concrete exchange: 319 fewer false positives for 287 more false negatives in the comparison sample, with a small improvement in equal-weight per-defendant loss. At the same numerical weight, a class-conditional objective selects $t=5$ instead of $t=6$. Thus, even the definition of an “equal-weight optimum” depends on how errors are counted.
 
-The cost-sensitivity analysis showed that the same scores support sharply different aggregate loss-minimizing rules as the stated error weighting changes. Together, these results separate two questions that are often compressed into one: how a score performs, and how an institution turns that score into a consequential rule.
-
-Statistical analysis can characterize the consequences of alternative thresholds and identify the rule that minimizes a specified objective. The choice of objective, the consequence attached to the classification, and the institutional response to the resulting distribution of errors remain matters of decision and justification. Once a score becomes a rule with consequences, responsibility for the choices between prediction and action remains with the institution using it.
+The study cannot identify an appropriate legal consequence, a morally correct error weight, or the threshold used in historical judicial practice. It can identify what a prospective institutional decision would need to make explicit: the population and outcome, the threshold, the loss definition and weights, the distribution of errors, the permitted use of the classification, and a route to review and remedy. The proposed accountability record makes those choices open to justification rather than attributing them to the score itself.
 
 # Declaration of Generative AI Use
 
-Generative AI tools were used for grammar and language editing, structural feedback, revision of selected passages, and assistance with literature searches. The author reviewed the final manuscript and takes responsibility for its contents.
+Generative AI tools were used for grammar and language editing, structural feedback, revision of selected passages, and assistance with literature searches. The abstract, introduction, discussion, accountability framework, and conclusion also received AI-assisted language and structural edits.
 
-# Supplemental robustness figures
-
-<figure id="fig:supp-bootstrap">
-<embed src="supplement_bootstrap_optimal_membership.pdf" style="width:82.0%" />
-<figcaption>Bootstrap minimizing-set membership frequencies at the three focal error weights. A replicate may have tied minimizers, so threshold membership frequencies at a given weight need not sum to 100%.</figcaption>
-</figure>
-
-<figure id="fig:supp-loss">
-<embed src="supplement_robustness_optimal_thresholds.pdf" style="width:82.0%" />
-<figcaption>Complete loss-minimizing threshold sets under the per-defendant primary loss and the class-conditional robustness loss across the full <span class="math inline"><em>λ</em></span> grid. Hollow and crossed markers preserve coincident minimizers.</figcaption>
-</figure>
+# References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
@@ -377,3 +346,15 @@ Wisconsin Supreme Court. 2016. “State v. Loomis.” <https://www.wicourts.gov/
 </div>
 
 </div>
+
+# Supplemental robustness figures
+
+<figure id="fig:supp-bootstrap">
+<embed src="supplement_bootstrap_optimal_membership.pdf" style="width:82.0%" />
+<figcaption>Bootstrap minimizing-set membership frequencies at the three focal error weights. A replicate may have tied minimizers, so threshold membership frequencies at a given weight need not sum to 100%.</figcaption>
+</figure>
+
+<figure id="fig:supp-loss">
+<embed src="supplement_robustness_optimal_thresholds.pdf" style="width:82.0%" />
+<figcaption>Complete loss-minimizing threshold sets under the per-defendant primary loss and the class-conditional robustness loss across the full <span class="math inline"><em>λ</em></span> grid. Hollow and crossed markers preserve coincident minimizers.</figcaption>
+</figure>

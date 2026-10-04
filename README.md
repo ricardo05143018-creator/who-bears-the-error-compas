@@ -37,8 +37,4 @@ and two supplemental figures in `output/figures/`.
 - `tests/`: data-integrity, threshold-mapping, replication, and endpoint tests
 - `output/tables/`: canonical aggregated machine-readable results
 - `output/figures/`: frozen main and supplemental figures
-- `paper/`: integrated manuscript source, bibliography, and final PDF
-
-The loss parameter `lambda` is a prespecified sensitivity device, not a measure
-of realized social harm. The paper does not claim that any displayed threshold
-is legally or morally correct.
+- `paper/`: manuscript sources, bibliography, and final PDF
